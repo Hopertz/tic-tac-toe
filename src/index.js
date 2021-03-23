@@ -24,23 +24,29 @@ class Board extends React.Component {
   }
 
   render() {
+
+   let master = []
+   let id = 0
+   for (let step = 0; step < 3; step++) {
+       var ourArray = []
+      for (let step = 0; step < 3; step++) {
+          ourArray.push(this.renderSquare(id))
+          id++;
+      }
+      master.push(ourArray)
+    
+    }
+  
+    const board = master.map((arr,id) => {
+      return (
+        <div className="board-row">
+          {arr}
+        </div>
+      );
+    });
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {board}
       </div>
     );
   }
@@ -55,6 +61,7 @@ class Game extends React.Component {
     }],
     stepNumber: 0,
     xIsNext: true,
+    position : [null]
   };
 
   }
@@ -63,18 +70,23 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length-1];
     const squares = current.squares.slice();
+    const position = this.state.position.slice(0,this.state.stepNumber + 1 );
     if (calculateWinner(squares)|| squares[i]){
       return;
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    const row = checkrow(i)
+    const col = checkcol(i)
     this.setState(
       { history : history.concat([{squares : squares}])
         ,
       stepNumber: history.length,
-      xIsNext : !this.state.xIsNext
+      xIsNext : !this.state.xIsNext,
+      position : position.concat([[col,row]])
       }
       );
   }
+  
   jumpTo(step) {
     this.setState({
       stepNumber: step,
@@ -83,12 +95,14 @@ class Game extends React.Component {
   }
   render() {
     const history = this.state.history
+    const position = this.state.position
+    console.log(position)
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares)
     //array.map(function(currentValue, index, arr), thisValue)
     const moves = history.map((step, move) => {
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move (col, row) => (' + position[move]+")":
         'Go to game start';
       return (
         <li key = {move}>
@@ -134,6 +148,26 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function checkrow(i){
+  if (i>=0 && i <=2){
+    return 1
+  }else if (i>=3 && i <=5){
+    return 2
+  }else{
+    return 3
+  }
+}
+
+function checkcol(i){
+  if (i === 0 || i === 3 || i === 6 ){
+    return 1
+  }else if (i === 1 || i === 4 || i === 7 ){
+    return 2
+  }else{
+    return 3
+  }
 }
 
 // ========================================
