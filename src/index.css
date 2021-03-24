@@ -3,6 +3,10 @@ body {
   margin: 20px;
 }
 
+a {
+  text-decoration: none;
+}
+
 ol, ul {
   padding-left: 30px;
 }
@@ -48,3 +52,4 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
